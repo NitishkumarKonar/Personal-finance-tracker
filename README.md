@@ -1,4 +1,5 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+A personal finance visualizer built with Next.js, React, Tailwind, Shadcn/UI, Recharts, and MongoDB to track transactions, visualize expenses, and manage budgets.
+(https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
