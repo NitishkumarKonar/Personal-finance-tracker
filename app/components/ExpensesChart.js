@@ -1,31 +1,52 @@
 "use client";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { parseISO, format } from "date-fns";
+
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+
+const COLORS = [
+  "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
+  "#A28CFF", "#FF6699", "#33CC99", "#FF9933",
+];
 
 export default function ExpensesChart({ transactions }) {
-  const monthlyTotals = {};
+  const categoryTotals = transactions.reduce((acc, transaction) => {
+    if (transaction.category) {
+      acc[transaction.category] = (acc[transaction.category] || 0) + parseFloat(transaction.amount);
+    }
+    return acc;
+  }, {});
 
-  transactions.forEach((t) => {
-    const date = parseISO(t.date);
-    const month = format(date, "MMM yyyy");
-    monthlyTotals[month] = (monthlyTotals[month] || 0) + parseFloat(t.amount);
-  });
-
-  const data = Object.entries(monthlyTotals).map(([month, amount]) => ({
-    month,
-    amount,
+  const data = Object.keys(categoryTotals).map((category) => ({
+    name: category,
+    value: categoryTotals[category],
   }));
 
+  if (data.length === 0) {
+    return (
+      <div className="text-gray-500">
+        No transaction data to display.
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-2xl bg-white p-4 rounded shadow-md">
-      <h2 className="text-xl font-bold mb-4 text-black">Monthly Expenses</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <XAxis dataKey="month" />
-          <YAxis />
+    <div className="w-full h-96">
+      <ResponsiveContainer>
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            outerRadius={130}
+            fill="#8884d8"
+            label
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
           <Tooltip />
-          <Bar dataKey="amount" fill="#3b82f6" />
-        </BarChart>
+          <Legend />
+        </PieChart>
       </ResponsiveContainer>
     </div>
   );

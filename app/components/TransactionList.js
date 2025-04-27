@@ -1,30 +1,39 @@
-import { format } from "date-fns";
+"use client";
 
-export default function TransactionList({ transactions, onDelete, onEdit }) {
+export default function TransactionList({ transactions, onEdit, onDelete }) {
   return (
-    <div className="space-y-4">
-      {transactions.map((transaction) => (
-        <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-100 rounded">
-          <div>
-            <p className="font-semibold">{transaction.description}</p>
-            <p className="text-sm">{format(new Date(transaction.date), "MM/dd/yyyy")}</p>
+    <div className="space-y-4 w-full max-w-2xl">
+      {transactions.length === 0 ? (
+        <p className="text-gray-500">No transactions added yet.</p>
+      ) : (
+        transactions.map((transaction, index) => (
+          <div
+            key={index}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded shadow"
+          >
+            <div className="flex flex-col">
+              <span className="font-bold">₹{transaction.amount}</span>
+              <span className="text-gray-600">{transaction.description}</span>
+              <span className="text-sm text-gray-400">{transaction.date}</span>
+              <span className="text-sm text-blue-500">{transaction.category}</span> {/* Category shown here */}
+            </div>
+            <div className="flex space-x-2 mt-2 sm:mt-0">
+              <button
+                onClick={() => onEdit(transaction)}
+                className="px-3 py-1 text-sm bg-yellow-500 text-white rounded"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => onDelete(transaction)}
+                className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+              >
+                Delete
+              </button>
+            </div>
           </div>
-          <div className="flex gap-4">
-            <button
-              onClick={() => onEdit(transaction)} // Pass the transaction to the onEdit function
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => onDelete(transaction.id)}
-              className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

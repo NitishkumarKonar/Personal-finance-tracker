@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 
+const categories = ["Food", "Travel", "Shopping", "Bills", "Entertainment", "Health", "Others"];
+
 export default function TransactionForm({ onSubmit, editingTransaction }) {
-  const [form, setForm] = useState({ amount: "", description: "", date: "" });
+  const [form, setForm] = useState({ amount: "", description: "", date: "", category: "" });
 
   useEffect(() => {
     if (editingTransaction) {
       setForm(editingTransaction);
-    } else {
-      setForm({ amount: "", description: "", date: "" });
     }
   }, [editingTransaction]);
 
@@ -19,12 +19,19 @@ export default function TransactionForm({ onSubmit, editingTransaction }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.amount || !form.description || !form.date) {
+    if (!form.amount || !form.description || !form.date || !form.category) {
       window.alert("All fields are required!");
       return;
     }
-    onSubmit(form); // Pass form to parent (Home)
-    setForm({ amount: "", description: "", date: "" }); // Reset form after submit
+    onSubmit(form);
+    setTimeout(() => {
+      if (editingTransaction) {
+        window.alert("Transaction updated successfully!");
+      } else {
+        window.alert("Transaction added successfully!");
+      }
+    }, 100);
+    setForm({ amount: "", description: "", date: "", category: "" });
   };
 
   return (
@@ -52,6 +59,19 @@ export default function TransactionForm({ onSubmit, editingTransaction }) {
         onChange={handleChange}
         className="w-full p-2 border rounded"
       />
+      <select
+        name="category"
+        value={form.category}
+        onChange={handleChange}
+        className="w-full p-2 border rounded"
+      >
+        <option value="">Select Category</option>
+        {categories.map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
+      </select>
       <button type="submit" className="bg-black text-white px-4 py-2 rounded">
         {editingTransaction ? "Update Transaction" : "Add Transaction"}
       </button>
